@@ -1,0 +1,31 @@
+nginx:
+    build: ./nginx
+    links:
+        - web:web
+    ports:
+        - "80:80"
+
+web:
+  build: ./app-client
+  ports:
+    - "8089:8089"
+  links:
+    - "apiservice:apiservice"
+  command: node server.js
+  environment:
+    NODE_ENV: production
+    WEB_ENV: docker
+
+apiservice:
+  build: ./app-api-server
+  ports:
+    - "3032:3032"
+  links:
+    - "db"
+  command: node server.js
+
+db:
+  image: mongo
+  ports:
+    - "27017:27017"
+  command: "--smallfiles --logpath=/dev/null"

@@ -1,0 +1,28 @@
+web:
+  build: ./app-client
+  volumes:
+    - "./app-client:/usr/src/app"
+  ports:
+    - "8089:8089"
+  links:
+    - "apiservice:apiservice"
+  command: nodemon --legacy-watch -w server.js server.js
+  environment:
+    WEB_ENV: docker
+    NODE_ENV: debug
+
+apiservice:
+  build: ./app-api-server
+  volumes:
+    - "./app-api-server:/usr/src/app"
+  ports:
+    - "3032:3032"
+  links:
+    - "db"
+  command: nodemon --legacy-watch -w server.js server.js
+
+db:
+  image: mongo
+  ports:
+    - "27017:27017"
+  command: "--smallfiles --logpath=/dev/null"
